@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Edunic.Splash" parent="Theme.SplashScreen">
+
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
+
+        <item name="postSplashScreenTheme">@style/Theme.EduNic</item>
+
+    </style>
+    <style name="Theme.EduNic" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>
+

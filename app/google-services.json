@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "303706176370",
+    "firebase_url": "https://practica-105ea-default-rtdb.firebaseio.com",
+    "project_id": "practica-105ea",
+    "storage_bucket": "practica-105ea.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:303706176370:android:0e8d926fea3583f533bbeb",
+        "android_client_info": {
+          "package_name": "com.crj4.edunic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "303706176370-2qjgah049r3ut8kk92p69qdiuctg3bf5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.crj4.edunic",
+            "certificate_hash": "b87a94236341b4d85c468d111594a65d9919b65e"
+          }
+        },
+        {
+          "client_id": "303706176370-jeo4ta06a0pgdrm3auob8pcjqe50a4p2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLxEUzE7p1oz9nUmPzAaSvhWOtq1W71-o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "303706176370-jeo4ta06a0pgdrm3auob8pcjqe50a4p2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

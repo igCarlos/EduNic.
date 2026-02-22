@@ -1,0 +1,79 @@
+
+MainButton(text = "Mis Cursos") { navController.navigate("courses") }
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+LogoutButton(viewModel = viewModel, navController = navController, currentRoute = "user_home")
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+InfoCard(title = "Curso de Kotlin", description = "Aprende Jetpack Compose desde cero")
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+val scaffoldState = rememberScaffoldState()
+ShowSnackBar(scaffoldState, "¡Usuario registrado!")
+
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+import androidx.compose.material3.*
+
+@Composable
+fun MyScreen() {
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { padding ->
+        Button(onClick = {
+            ShowSnackBar(snackbarHostState, "¡Hola, snackbar!")
+        }, modifier = Modifier.padding(padding)) {
+            Text("Mostrar Snackbar")
+        }
+    }
+}
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+ SimpleList(items = menuItems) { selectedItem ->
+        when (selectedItem) {
+            "Mi Perfil" -> navController.navigate("profile")
+            "Configuración" -> navController.navigate("settings")
+            "Ayuda" -> navController.navigate("help")
+            "Cerrar Sesión" -> navController.navigate("login") // o usar tu LogoutButton
+        }
+    }
+
+ ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Campo de contraseña:
+
+var password by remember { mutableStateOf("") }
+
+AppTextField(
+    value = password,
+    onValueChange = { password = it },
+    label = "Password",
+    isPassword = true
+)
+
+Campo de texto normal:
+
+var username by remember { mutableStateOf("") }
+
+AppTextField(
+    value = username,
+    onValueChange = { username = it },
+    label = "Usuario"
+)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+imageBase64?.let { base64 ->
+    val bytes = android.util.Base64.decode(base64, android.util.Base64.DEFAULT)
+    val bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    Image(bitmap = bitmap.asImageBitmap(), contentDescription = null)
+}
