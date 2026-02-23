@@ -95,22 +95,7 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun getUserById(userId: String): User? {
-        return try {
-            firestoreDataSource.getUser(userId)
-                .getOrNull()
-                ?.let { map ->
-                    User(
-                        uid = userId,
-                        name = map["name"] as? String ?: "",
-                        lastname = map["lastname"] as? String ?: "",
-                        email = map["email"] as? String ?: "",
-                        role = map["role"] as? String ?: "STUDENT",
-                        dateOfBirth = map["dateOfBirth"] as? Timestamp,
-                        image = map["image"] as? String ?: ""
-                    )
-                }
-        } catch (e: Exception) {
-            null
-        }
+        return firestoreDataSource.getUserById(userId)
     }
+
 }

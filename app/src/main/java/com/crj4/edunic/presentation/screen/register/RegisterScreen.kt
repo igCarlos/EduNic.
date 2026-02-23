@@ -20,6 +20,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -110,7 +111,8 @@ fun RegisterScreen(
     )
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+
     ) { paddingValues ->
 
         Column(
@@ -131,7 +133,8 @@ fun RegisterScreen(
             Spacer(Modifier.height(32.dp))
 
             // Avatar elegante
-            Box(contentAlignment = Alignment.BottomEnd) {
+            Box(contentAlignment = Alignment.BottomEnd,
+            ) {
 
                 Image(
                     painter = rememberAsyncImagePainter(

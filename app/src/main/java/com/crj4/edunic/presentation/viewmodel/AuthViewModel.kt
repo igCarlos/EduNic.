@@ -16,6 +16,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import com.crj4.edunic.domain.manager.RoleManager
 import com.crj4.edunic.domain.model.Permission
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 
 class AuthViewModel : ViewModel() {
 
@@ -47,12 +50,32 @@ class AuthViewModel : ViewModel() {
 
     private val deleteUserUseCase = AppModule.deleteUserUseCase
     private val updateUserUseCase = AppModule.updateUserUseCase
-
+    val searchQuery = MutableStateFlow("")
     private val _users = MutableStateFlow<List<User>>(emptyList())
     val usersRealTime: StateFlow<List<User>> = _users
 
+    val filteredUsers: StateFlow<List<User>> =
+        combine(_users, searchQuery) { usersList, query ->
+
+            if (query.isBlank()) {
+                usersList
+            } else {
+                usersList.filter { user ->
+                    user.name.contains(query, ignoreCase = true) ||
+                            user.lastname.contains(query, ignoreCase = true) ||
+                            user.email.contains(query, ignoreCase = true)
+                }
+            }
+
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(5000),
+            emptyList()
+        )
+
     private val _selectedUser = MutableStateFlow<User?>(null)
     val selectedUser: StateFlow<User?> = _selectedUser
+
 
     init {
         checkSession()
@@ -246,8 +269,9 @@ class AuthViewModel : ViewModel() {
         }
     }
 
-
-
+    fun onSearchChange(query: String) {
+        searchQuery.value = query
+    }
 
 
 

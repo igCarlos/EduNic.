@@ -83,15 +83,6 @@ class FirestoreDataSource {
         }
     }
 
-//    suspend fun getAllUsersT(): Result<List<User>> {
-//        return try {
-//            val snapshot = firestore.collection("users").get().await()
-//            val usersList = snapshot.toObjects(User::class.java)
-//            Result.success(usersList)
-//        } catch (e: Exception) {
-//            Result.failure(e)
-//        }
-//    }
 
     fun getAllUsers(): Flow<List<User>> = callbackFlow {
 
@@ -141,11 +132,10 @@ class FirestoreDataSource {
     }
 
     // Obtener usuario por ID
-    suspend fun getUserById(userId: String): User {
+    suspend fun getUserById(userId: String): User? {
         val doc = usersCollection.document(userId).get().await()
-        return doc.toObject<User>() ?: throw Exception("Usuario no encontrado")
+        return doc.toObject(User::class.java)
     }
-
 
 
 

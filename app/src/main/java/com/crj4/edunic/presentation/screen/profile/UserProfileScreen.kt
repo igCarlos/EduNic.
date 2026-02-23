@@ -5,15 +5,22 @@ import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.crj4.edunic.presentation.viewmodel.AuthViewModel
@@ -73,11 +80,20 @@ fun UserProfileScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 32.dp)
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(Color(0xFFBB86FC), Color(0xFF6200EE))
+                    )
+                )
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp,180.dp)
+            ) {
 
-                // Imagen de perfil con borde y sombra
+                // Imagen de perfil circular con sombra
                 val bitmapImage = remember(imageBase64) {
                     imageBase64?.let {
                         val bytes = Base64.decode(it, Base64.DEFAULT)
@@ -85,46 +101,66 @@ fun UserProfileScreen(
                     }
                 }
                 bitmapImage?.let { bmp ->
-                    Card(
-                        shape = RoundedCornerShape(100.dp),
-                        elevation = CardDefaults.cardElevation(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        modifier = Modifier.size(160.dp).padding(10.dp,10.dp)
-                    ) {
-                        Image(
-                            bitmap = bmp.asImageBitmap(),
-                            contentDescription = "Imagen de perfil",
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
+                    Image(
+                        bitmap = bmp.asImageBitmap(),
+                        contentDescription = "Imagen de perfil",
+                        modifier = Modifier
+                            .size(140.dp)
+                            .clip(CircleShape)
+                            .shadow(12.dp, CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } ?: Box(
+                    modifier = Modifier
+                        .size(140.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray.copy(alpha = 0.3f))
+                        .shadow(12.dp, CircleShape),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = name.firstOrNull()?.uppercase() ?: "",
+                        fontSize = 48.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Nombre completo destacado
+                // Nombre completo
                 Text(
                     text = "$name $lastname",
-                    style = MaterialTheme.typography.headlineSmall,
-                    color = Color(0xFF1E1E2C)
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
 
-                // Rol debajo del nombre
+                // Rol destacado
                 Text(
                     text = role.uppercase(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color(0xFF6200EE)
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color(0xFFFFC107),
+                    modifier = Modifier
+                        .padding(top = 4.dp)
+                        .background(
+                            Color.White.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
                 )
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(32.dp))
 
-                // Tarjeta de información profesional
+                // Card de información
                 Card(
                     modifier = Modifier
-                        .fillMaxWidth(1f)
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
-                    elevation = CardDefaults.cardElevation(8.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp),
+                    shape = RoundedCornerShape(20.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.95f)),
+                    elevation = CardDefaults.cardElevation(12.dp)
                 ) {
                     Column(modifier = Modifier.padding(24.dp)) {
 
@@ -146,17 +182,17 @@ fun InfoRow(label: String, value: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.Medium,
             color = Color.Gray
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyMedium,
+            fontWeight = FontWeight.SemiBold,
             color = Color(0xFF1E1E2C)
         )
     }

@@ -1,14 +1,11 @@
 package com.crj4.edunic.presentation.screen.login
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.crj4.edunic.domain.model.Role
@@ -147,18 +144,17 @@ fun LoginScreen(
                         Text("¿Olvidaste tu contraseña?")
                     }
 
-                    TextButton(
-                        onClick = onNavigateToRegister
-                    ) {
-                        Text("¿No tienes cuenta? Regístrate")
-                    }
+//                    TextButton(
+//                        onClick = onNavigateToRegister
+//                    ) {
+//                        Text("¿No tienes cuenta? Regístrate")
+//                    }
 
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
         }
 
-        // 🔁 Estados (NO SE TOCAN)
         when (state) {
 
             is AuthState.Authenticated -> {

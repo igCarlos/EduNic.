@@ -91,7 +91,7 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
                     bottomNavItems = listOf(
                         BottomNavItem(Screen.AdminHome.route, Icons.Default.Home, "Inicio"),
                         BottomNavItem(Screen.UserProfile.route, Icons.Default.Person, "Perfil"),
-                        BottomNavItem("settings", Icons.Default.Settings, "Ajustes")
+//                        BottomNavItem("settings", Icons.Default.Settings, "Ajustes")
 
                     )
                 ) {
