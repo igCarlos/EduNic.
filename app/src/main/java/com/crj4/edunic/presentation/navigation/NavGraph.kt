@@ -51,7 +51,7 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
         startDestination = Screen.Splash.route
     ) {
 
-        // 🔹 SplashScreen
+        // SplashScreen
         composable(Screen.Splash.route) {
             LaunchedEffect(authState) {
                 if (!navigated && authState !is AuthState.Loading) {
@@ -81,7 +81,7 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
             SplashScreen()
         }
 
-        // 🔹 Pantallas que necesitan MainScaffold
+        // Pantallas que necesitan MainScaffold
         scaffoldRoutes.forEach { route ->
             composable(route) {
                 MainScaffold(
@@ -109,7 +109,7 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
             }
         }
 
-        // 🔹 Pantallas sin MainScaffold
+        // Pantallas sin MainScaffold
         composable(Screen.Login.route) {
             LoginScreen(
                 viewModel = authViewModel,
@@ -137,13 +137,6 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
                 }
             )
         }
-
-//        composable(Screen.RegisterUser.route) {
-//            RegisterScreen(
-//                viewModel = authViewModel,
-//                onNavigate = { roleRoute -> navController.navigate(roleRoute) }
-//            )
-//        }
 
         composable(Screen.ResetPassword.route) {
             ForgotPasswordScreen(

@@ -8,7 +8,7 @@ object RoleManager {
     private val rolePermissions = mapOf(
         Role.ADMIN to setOf(
             Permission.CREATE_USER,
-            Permission.UPDATE_USER, // 🔹 ADMIN puede actualizar usuarios
+            Permission.UPDATE_USER,
             Permission.DELETE_USER,
             Permission.VIEW_GRADES,
             Permission.EDIT_GRADES,
@@ -16,7 +16,7 @@ object RoleManager {
         ),
 
         Role.TUTOR to setOf(
-            Permission.UPDATE_USER, // 🔹 si quieres que los tutores también puedan editar usuarios
+            Permission.UPDATE_USER,
             Permission.VIEW_GRADES,
             Permission.EDIT_GRADES,
             Permission.VIEW_DASHBOARD

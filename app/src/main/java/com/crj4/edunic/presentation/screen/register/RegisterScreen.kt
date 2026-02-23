@@ -350,7 +350,7 @@ fun RegisterScreen(
             }
         }
 
-        if (formCompleted && state is AuthState.Authenticated) {
+        if (formCompleted) {
             LaunchedEffect(Unit) {
                 onNavigate(Screen.AdminHome.route)
             }
