@@ -1,31 +1,18 @@
 package com.crj4.edunic.presentation.screen.materia
 
-import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.os.Build
-import android.util.Base64
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.crj4.edunic.domain.model.Role
 import com.crj4.edunic.domain.model.Subject
 import com.crj4.edunic.domain.model.User
+import com.crj4.edunic.presentation.components.ImagePickerComponent
 import com.crj4.edunic.presentation.viewmodel.AuthViewModel
 import com.crj4.edunic.presentation.viewmodel.SubjectViewModel
-import java.io.ByteArrayOutputStream
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,80 +21,18 @@ fun CreateSubjectDialog(
     authViewModel: AuthViewModel,
     onDismiss: () -> Unit
 ) {
-    val context = LocalContext.current
 
     var name by remember { mutableStateOf("") }
-    var teacherId by remember { mutableStateOf("") }
-    var teacherName by remember { mutableStateOf("") }
     var gradeId by remember { mutableStateOf("") }
     var gradeName by remember { mutableStateOf("") }
     var isActive by remember { mutableStateOf(true) }
-
     var imageBase64 by remember { mutableStateOf("") }
-    var selectedBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var errorMessage by remember { mutableStateOf("") }
-
-    val maxImageSizeBytes = 150_000 // 150 KB
-    val allowedTypes = listOf("image/jpeg", "image/jpg", "image/png")
 
     val teachers by authViewModel.filteredUsers.collectAsState()
     val currentUser by authViewModel.currentUserData.collectAsState()
 
     var expanded by remember { mutableStateOf(false) }
     var selectedTeacher by remember { mutableStateOf<User?>(null) }
-
-    val imagePickerLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri ->
-
-        if (uri != null) {
-            try {
-
-                val mimeType = context.contentResolver.getType(uri)
-                if (mimeType !in allowedTypes) {
-                    errorMessage = "Formato no permitido. Solo JPG, JPEG o PNG."
-                    selectedBitmap = null
-                    imageBase64 = ""
-                    return@rememberLauncherForActivityResult
-                }
-
-                val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                    val source = ImageDecoder.createSource(context.contentResolver, uri)
-                    ImageDecoder.decodeBitmap(source)
-                } else {
-                    @Suppress("DEPRECATION")
-                    android.provider.MediaStore.Images.Media.getBitmap(
-                        context.contentResolver,
-                        uri
-                    )
-                }
-
-                val byteStream = ByteArrayOutputStream()
-                // Guardar como PNG si es PNG, si no JPEG
-                if (mimeType == "image/png") {
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteStream)
-                } else {
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, byteStream)
-                }
-
-                val bytes = byteStream.toByteArray()
-
-                if (bytes.size > maxImageSizeBytes) {
-                    errorMessage = "La imagen supera ${maxImageSizeBytes / 1024} KB"
-                    selectedBitmap = null
-                    imageBase64 = ""
-                    return@rememberLauncherForActivityResult
-                }
-
-                imageBase64 = Base64.encodeToString(bytes, Base64.DEFAULT)
-                selectedBitmap = bitmap
-                errorMessage = ""
-
-            } catch (e: Exception) {
-                errorMessage = "Error al procesar imagen"
-            }
-        }
-    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -119,6 +44,7 @@ fun CreateSubjectDialog(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
+                // Nombre
                 OutlinedTextField(
                     value = name,
                     onValueChange = { name = it },
@@ -128,36 +54,15 @@ fun CreateSubjectDialog(
 
                 Spacer(Modifier.height(8.dp))
 
-                // 🔥 PREVISUALIZACIÓN
-                if (selectedBitmap != null) {
-                    Image(
-                        bitmap = selectedBitmap!!.asImageBitmap(),
-                        contentDescription = "Imagen seleccionada",
-                        modifier = Modifier
-                            .size(120.dp)
-                            .clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                }
+                // COMPONENTE DE IMAGEN
+                ImagePickerComponent(
+                    modifier = Modifier.fillMaxWidth(),
+                    onImageSelected = { base64 ->
+                        imageBase64 = base64
+                    }
+                )
 
-                Button(
-                    onClick = { imagePickerLauncher.launch("image/*") },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(
-                        if (selectedBitmap == null)
-                            "Seleccionar imagen"
-                        else
-                            "Cambiar imagen"
-                    )
-                }
-
-                if (errorMessage.isNotEmpty()) {
-                    Text(
-                        text = errorMessage,
-                        color = MaterialTheme.colorScheme.error
-                    )
-                }
+                // Dropdown Profesor
                 ExposedDropdownMenuBox(
                     expanded = expanded,
                     onExpandedChange = {
@@ -168,7 +73,7 @@ fun CreateSubjectDialog(
                 ) {
 
                     OutlinedTextField(
-                        value = selectedTeacher?.name ?: "",
+                        value = selectedTeacher?.let { "${it.name} ${it.lastname}" } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Profesor") },
@@ -200,6 +105,7 @@ fun CreateSubjectDialog(
                     }
                 }
 
+                // ID Grado
                 OutlinedTextField(
                     value = gradeId,
                     onValueChange = { gradeId = it },
@@ -207,6 +113,7 @@ fun CreateSubjectDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                // Nombre Grado
                 OutlinedTextField(
                     value = gradeName,
                     onValueChange = { gradeName = it },
@@ -214,6 +121,7 @@ fun CreateSubjectDialog(
                     modifier = Modifier.fillMaxWidth()
                 )
 
+                // Switch Activo
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     modifier = Modifier.fillMaxWidth()
@@ -234,8 +142,10 @@ fun CreateSubjectDialog(
                         Subject(
                             name = name,
                             imageUrl = imageBase64,
-                            teacherId = selectedTeacher?.uid?:"",
-                            teacherName = "${selectedTeacher?.name} ${selectedTeacher?.lastname}",
+                            teacherId = selectedTeacher?.uid ?: "",
+                            teacherName = selectedTeacher?.let {
+                                "${it.name} ${it.lastname}"
+                            } ?: "",
                             gradeId = gradeId,
                             gradeName = gradeName,
                             isActive = isActive

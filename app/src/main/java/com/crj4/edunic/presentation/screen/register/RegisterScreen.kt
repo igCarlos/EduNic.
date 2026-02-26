@@ -1,5 +1,6 @@
 package com.crj4.edunic.presentation.screen.register
 
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
 import android.util.Base64
@@ -20,14 +21,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.crj4.edunic.R
 import com.crj4.edunic.domain.model.Role
 import com.crj4.edunic.domain.model.User
 import com.crj4.edunic.presentation.navigation.Screen
@@ -58,13 +58,18 @@ fun RegisterScreen(
     var selectedRole by remember { mutableStateOf(Role.STUDENT) }
 
     var imageUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var selectedBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var imageBase64 by remember { mutableStateOf<String?>(null) }
+    var imageError by remember { mutableStateOf("") }
+
+    val maxImageSizeBytes = 150_000 // 150 KB
+    val allowedTypes = listOf("image/jpeg", "image/jpg", "image/png")
 
     var formCompleted by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
-    // 🔹 Cargar usuario si es edición
+    // Cargar usuario si es edición
     LaunchedEffect(userId) {
         userId?.let { viewModel.loadUserById(it) }
     }
@@ -79,25 +84,56 @@ fun RegisterScreen(
             selectedRole = Role.valueOf(it.role)
             selectedDateMillis = it.dateOfBirth?.toDate()?.time
             imageBase64 = it.image
+            // Aquí puedes decodificar la imagen si quieres mostrar preview
         }
     }
 
-    // 🔹 Selector de imagen
+    // Selector de imagen con validaciones
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri ->
-        uri?.let {
-            imageUri = it
-            val bitmap = if (Build.VERSION.SDK_INT < 28) {
-                android.provider.MediaStore.Images.Media.getBitmap(context.contentResolver, it)
-            } else {
-                val source = ImageDecoder.createSource(context.contentResolver, it)
-                ImageDecoder.decodeBitmap(source)
-            }
+        if (uri != null) {
+            try {
+                val mimeType = context.contentResolver.getType(uri)
+                if (mimeType !in allowedTypes) {
+                    imageError = "Formato no permitido. Solo JPG, JPEG o PNG"
+                    selectedBitmap = null
+                    imageBase64 = null
+                    return@rememberLauncherForActivityResult
+                }
 
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(android.graphics.Bitmap.CompressFormat.JPEG, 70, stream)
-            imageBase64 = Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT)
+                val bitmap = if (Build.VERSION.SDK_INT < 28) {
+                    android.provider.MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
+                } else {
+                    val source = ImageDecoder.createSource(context.contentResolver, uri)
+                    ImageDecoder.decodeBitmap(source)
+                }
+
+                val stream = ByteArrayOutputStream()
+                if (mimeType == "image/png") {
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                } else {
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+                }
+
+                val bytes = stream.toByteArray()
+                if (bytes.size > maxImageSizeBytes) {
+                    imageError = "La imagen supera ${maxImageSizeBytes / 1024} KB"
+                    selectedBitmap = null
+                    imageBase64 = null
+                    return@rememberLauncherForActivityResult
+                }
+
+                imageBase64 = Base64.encodeToString(bytes, Base64.DEFAULT)
+                selectedBitmap = bitmap
+                imageError = ""
+                imageUri = uri
+
+            } catch (e: Exception) {
+                imageError = "Error al procesar la imagen"
+                selectedBitmap = null
+                imageBase64 = null
+            }
         }
     }
 
@@ -112,7 +148,6 @@ fun RegisterScreen(
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-
     ) { paddingValues ->
 
         Column(
@@ -132,23 +167,34 @@ fun RegisterScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // Avatar elegante
-            Box(contentAlignment = Alignment.BottomEnd,
-            ) {
+            // Avatar con preview y FAB para seleccionar imagen
+            Box(contentAlignment = Alignment.BottomEnd) {
 
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        imageUri ?: if (imageBase64 != null)
-                            "data:image/jpeg;base64,$imageBase64"
-                        else null
-                    ),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(130.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                )
+                if (selectedBitmap != null) {
+                    Image(
+                        bitmap = selectedBitmap!!.asImageBitmap(),
+                        contentDescription = "Imagen seleccionada",
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Image(
+                        painter = rememberAsyncImagePainter(
+                            imageUri ?: if (imageBase64 != null)
+                                "data:image/jpeg;base64,$imageBase64"
+                            else null
+                        ),
+                        contentDescription = "Avatar",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(130.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                    )
+                }
 
                 FloatingActionButton(
                     onClick = { launcher.launch("image/*") },
@@ -158,19 +204,19 @@ fun RegisterScreen(
                 }
             }
 
+            if (imageError.isNotEmpty()) {
+                Spacer(Modifier.height(6.dp))
+                Text(imageError, color = MaterialTheme.colorScheme.error)
+            }
+
             Spacer(Modifier.height(32.dp))
 
             Card(
                 shape = RoundedCornerShape(24.dp),
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color.White
-                )
+                colors = CardDefaults.cardColors(containerColor = Color.White)
             ) {
-
-                Column(
-                    modifier = Modifier.padding(24.dp)
-                ) {
+                Column(modifier = Modifier.padding(24.dp)) {
 
                     OutlinedTextField(
                         value = name,
@@ -227,19 +273,12 @@ fun RegisterScreen(
 
                     if (passwordError.isNotEmpty()) {
                         Spacer(Modifier.height(6.dp))
-                        Text(
-                            passwordError,
-                            color = MaterialTheme.colorScheme.error
-                        )
+                        Text(passwordError, color = MaterialTheme.colorScheme.error)
                     }
 
                     Spacer(Modifier.height(24.dp))
 
-                    Text(
-                        "Rol del Usuario",
-                        style = MaterialTheme.typography.titleMedium
-                    )
-
+                    Text("Rol del Usuario", style = MaterialTheme.typography.titleMedium)
                     Spacer(Modifier.height(12.dp))
 
                     Role.values().forEach { role ->
@@ -258,7 +297,7 @@ fun RegisterScreen(
 
                     Button(
                         onClick = {
-
+                            // Validaciones generales
                             if (name.isBlank() || lastname.isBlank() || email.isBlank() ||
                                 (userId == null && password.isBlank())
                             ) {
@@ -274,7 +313,6 @@ fun RegisterScreen(
                             if (userId == null) {
                                 val regex =
                                     Regex("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#\$%^&+=!]).{12,}$")
-
                                 if (!regex.matches(password)) {
                                     passwordError =
                                         "Mínimo 12 caracteres, mayúscula, minúscula, número y símbolo"
@@ -282,7 +320,14 @@ fun RegisterScreen(
                                 }
                             }
 
+                            if (imageBase64.isNullOrBlank()) {
+                                imageError = "Debes seleccionar una imagen válida"
+                                return@Button
+                            }
+
                             passwordError = ""
+                            imageError = ""
+
                             val timestamp = Timestamp(Date(selectedDateMillis!!))
 
                             if (userId == null) {
@@ -323,8 +368,7 @@ fun RegisterScreen(
 
                     when (state) {
                         is AuthState.Loading -> CircularProgressIndicator()
-                        is AuthState.Error ->
-                            Text(state.message, color = MaterialTheme.colorScheme.error)
+                        is AuthState.Error -> Text(state.message, color = MaterialTheme.colorScheme.error)
                         else -> {}
                     }
                 }
