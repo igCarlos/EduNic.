@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Subject
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -25,13 +26,15 @@ import com.crj4.edunic.presentation.viewmodel.AuthViewModel
 import com.crj4.edunic.domain.model.Role
 import com.crj4.edunic.presentation.components.BottomNavItem
 import com.crj4.edunic.presentation.components.MainScaffold
+import com.crj4.edunic.presentation.screen.materia.SubjectScreen
 import com.crj4.edunic.presentation.screen.register.RegisterScreen
 import com.crj4.edunic.presentation.viewmodel.AuthState
 import com.crj4.edunic.presentation.screen.profile.UserProfileScreen
 import com.crj4.edunic.presentation.screen.resetpassword.ForgotPasswordScreen
+import com.crj4.edunic.presentation.viewmodel.SubjectViewModel
 
 @Composable
-fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
+fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel, subjectViewModel: SubjectViewModel) {
 
     val authState = authViewModel.authState
     var navigated by remember { mutableStateOf(false) }
@@ -43,7 +46,8 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
         Screen.StudentHome.route,
         Screen.UserHome.route,
         Screen.UserProfile.route,
-        Screen.RegisterUser.route
+        Screen.RegisterUser.route,
+        Screen.Materia.route
     )
 
     NavHost(
@@ -59,8 +63,8 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
                         is AuthState.Authenticated -> {
                             val destination = when (authState.role) {
                                 Role.ADMIN -> Screen.AdminHome.route
-                                Role.TUTOR -> Screen.TutorHome.route
-                                Role.STUDENT -> Screen.StudentHome.route
+                                Role.TUTOR -> Screen.AdminHome.route
+                                Role.STUDENT -> Screen.AdminHome.route
 //                                Role.USER -> Screen.UserHome.route
                             }
                             navController.navigate(destination) {
@@ -91,19 +95,18 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel) {
                     bottomNavItems = listOf(
                         BottomNavItem(Screen.AdminHome.route, Icons.Default.Home, "Inicio"),
                         BottomNavItem(Screen.UserProfile.route, Icons.Default.Person, "Perfil"),
-//                        BottomNavItem("settings", Icons.Default.Settings, "Ajustes")
+                        BottomNavItem(Screen.Materia.route, Icons.Default.Subject, "Materias")
 
                     )
                 ) {
                     when (route) {
                         Screen.AdminHome.route -> AdminHome(authViewModel, navController)
-                        Screen.TutorHome.route -> TutorHome(authViewModel, navController)
-                        Screen.StudentHome.route -> StudentHome(authViewModel, navController)
                         Screen.UserHome.route -> UserHome(authViewModel, navController)
                         Screen.UserProfile.route -> UserProfileScreen(authViewModel, navController)
                         Screen.RegisterUser.route -> RegisterScreen(null,authViewModel) { roleRoute ->
                             navController.navigate(roleRoute)
                         }
+                        Screen.Materia.route -> SubjectScreen(subjectViewModel,authViewModel)
                     }
                 }
             }

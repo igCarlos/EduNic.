@@ -61,6 +61,7 @@ dependencies {
     implementation(libs.androidx.media3.exoplayer)
 //    implementation(libs.firebase.auth.ktx)
     implementation("androidx.compose.material3:material3:1.3.1")
+    implementation(libs.androidx.runtime)
 
     // Navigation Compose
     val navVersion = "2.9.7"

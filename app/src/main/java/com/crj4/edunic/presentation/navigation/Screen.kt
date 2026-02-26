@@ -13,4 +13,5 @@ sealed class Screen(val route: String) {
     object EditarUser : Screen("register_user/{userId}")
     object ResetPassword : Screen("forgot_password")
     object UserProfile : Screen("rofile")
+    object Materia : Screen("subject")
 }

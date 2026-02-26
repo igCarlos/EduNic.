@@ -1,13 +1,20 @@
 package com.crj4.edunic.presentation.screen.login
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.crj4.edunic.R
 import com.crj4.edunic.domain.model.Role
 import com.crj4.edunic.presentation.components.AppTextField
 import com.crj4.edunic.presentation.navigation.Screen
@@ -61,6 +68,18 @@ fun LoginScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
 
+
+                    Image(
+                        painter = painterResource(R.drawable.logo),
+                        contentDescription = "Logo",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .size(140.dp)
+                            .clip(CircleShape)
+                            .shadow(12.dp, CircleShape)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         text = "Bienvenido a EduNic",
                         style = MaterialTheme.typography.headlineSmall,

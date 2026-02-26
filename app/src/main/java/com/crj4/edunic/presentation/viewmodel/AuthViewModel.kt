@@ -77,6 +77,10 @@ class AuthViewModel : ViewModel() {
     val selectedUser: StateFlow<User?> = _selectedUser
 
 
+    private val _currentUserData = MutableStateFlow<User?>(null)
+    val currentUserData: StateFlow<User?> = _currentUserData
+
+
     init {
         checkSession()
 
@@ -86,6 +90,8 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
+
+
 
     private fun checkSession() {
         val uid = getCurrentUserUseCase()
@@ -117,12 +123,22 @@ class AuthViewModel : ViewModel() {
     private suspend fun loadUserRole(uid: String) {
         getUserRoleUseCase(uid)
             .onSuccess { roleString ->
+
                 val role = Role.entries
                     .find { it.name == roleString.uppercase() }
 
                 if (role != null) {
                     currentRole = role
                     authState = AuthState.Authenticated(role)
+
+                    // 🔥 cargar datos completos del usuario
+                    try {
+                        val user = getUserByIdUseCase(uid)
+                        _currentUserData.value = user
+                    } catch (e: Exception) {
+                        usersError = "Error cargando usuario actual"
+                    }
+
                 } else {
                     authState = AuthState.Error("Invalid role")
                 }

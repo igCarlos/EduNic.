@@ -10,6 +10,7 @@ class FirebaseAuthDataSource {
     private val auth = FirebaseAuth.getInstance()
     private val firestore = FirebaseFirestore.getInstance()
 
+    // Para Iniciar Sesion
     suspend fun login(email: String, password: String): Result<String> {
         return try {
             val result = auth.signInWithEmailAndPassword(email, password).await()
@@ -23,6 +24,7 @@ class FirebaseAuthDataSource {
         return auth.currentUser?.uid
     }
 
+    // Para Cerrar Sesion
     suspend fun logout() {
         auth.signOut()
     }

@@ -11,6 +11,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.crj4.edunic.presentation.navigation.NavGraph
 import com.crj4.edunic.presentation.viewmodel.AuthViewModel
+import com.crj4.edunic.presentation.viewmodel.SubjectViewModel
 import com.crj4.edunic.ui.theme.EduNicTheme
 
 class MainActivity : ComponentActivity() {
@@ -38,7 +39,8 @@ class MainActivity : ComponentActivity() {
             EduNicTheme {
                 val navController = rememberNavController()
                 val authViewModel: AuthViewModel = viewModel()
-                NavGraph(navController, authViewModel)
+                val subjectViewModel: SubjectViewModel = viewModel()
+                NavGraph(navController, authViewModel,subjectViewModel)
             }
         }
     }

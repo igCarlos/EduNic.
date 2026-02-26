@@ -18,6 +18,15 @@ InfoCard(title = "Curso de Kotlin", description = "Aprende Jetpack Compose desde
 val scaffoldState = rememberScaffoldState()
 ShowSnackBar(scaffoldState, "¡Usuario registrado!")
 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+OCULTAR BOTONES SEGUN EL PERMISO
+if (viewModel.can(Permission.DELETE_SUBJECT)) {
+    IconButton(onClick = { viewModel.deleteSubject(subject.id) }) {
+        Icon(Icons.Default.Delete, contentDescription = "Eliminar")
+    }
+}
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 import androidx.compose.material3.*

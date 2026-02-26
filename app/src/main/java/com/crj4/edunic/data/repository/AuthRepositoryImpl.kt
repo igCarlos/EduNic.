@@ -67,6 +67,7 @@ class AuthRepositoryImpl(
         }
     }
 
+
     override suspend fun sendPasswordReset(email: String): Result<Unit> = suspendCancellableCoroutine { cont ->
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
@@ -86,8 +87,8 @@ class AuthRepositoryImpl(
         return firestoreDataSource.getAllUsers()
     }
 
-    override suspend fun deleteUser(id: String): Result<Unit> {
-        return firestoreDataSource.deleteUser(id)
+    override suspend fun deleteUser(uid: String): Result<Unit> {
+        return firestoreDataSource.deleteUser(uid)
     }
 
     override suspend fun updateUser(user: User): Result<Unit> {
