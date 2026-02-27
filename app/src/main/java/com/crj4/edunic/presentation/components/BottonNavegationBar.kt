@@ -76,8 +76,8 @@ fun BottomNavigationBar(
                         val targetRoute = if (item.label == "Inicio") {
                             when (authViewModel.currentRole) {
                                 Role.ADMIN -> Screen.AdminHome.route
-                                Role.TUTOR -> Screen.TutorHome.route
-                                Role.STUDENT -> Screen.StudentHome.route
+                                Role.TUTOR -> Screen.AdminHome.route
+                                Role.STUDENT -> Screen.AdminHome.route
                                 null -> Screen.Login.route
                             }
                         } else item.route

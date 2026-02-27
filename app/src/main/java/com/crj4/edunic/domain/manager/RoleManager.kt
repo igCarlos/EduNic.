@@ -28,7 +28,7 @@ object RoleManager {
         )
     )
 
-    fun hasPermission(role: Role, permission: Permission): Boolean =
+    fun hasPermission(role: Role?, permission: Permission): Boolean =
         rolePermissions[role]?.contains(permission) == true
 
     // Devuelve todos los permisos de un rol

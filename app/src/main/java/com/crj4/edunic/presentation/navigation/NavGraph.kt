@@ -42,8 +42,6 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel, sub
     // Rutas que deben tener MainScaffold
     val scaffoldRoutes = listOf(
         Screen.AdminHome.route,
-        Screen.TutorHome.route,
-        Screen.StudentHome.route,
         Screen.UserHome.route,
         Screen.UserProfile.route,
         Screen.RegisterUser.route,
@@ -94,8 +92,9 @@ fun NavGraph(navController: NavHostController, authViewModel: AuthViewModel, sub
                     currentRoute = route,
                     bottomNavItems = listOf(
                         BottomNavItem(Screen.AdminHome.route, Icons.Default.Home, "Inicio"),
+                        BottomNavItem(Screen.Materia.route, Icons.Default.Subject, "Materias"),
                         BottomNavItem(Screen.UserProfile.route, Icons.Default.Person, "Perfil"),
-                        BottomNavItem(Screen.Materia.route, Icons.Default.Subject, "Materias")
+
 
                     )
                 ) {

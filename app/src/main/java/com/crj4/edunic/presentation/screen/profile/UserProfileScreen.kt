@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.crj4.edunic.presentation.components.LogoutButton
+import com.crj4.edunic.presentation.navigation.Screen
 import com.crj4.edunic.presentation.viewmodel.AuthViewModel
 import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
@@ -171,7 +173,14 @@ fun UserProfileScreen(
                         }
                         InfoRow(label = "Rol", value = role)
                     }
+
+
+                    LogoutButton(viewModel,navController, Screen.Login.route)
+
+
                 }
+
+
             }
         }
     }

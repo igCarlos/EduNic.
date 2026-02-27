@@ -24,7 +24,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.crj4.edunic.domain.manager.RoleManager
 import com.crj4.edunic.domain.model.Permission
@@ -113,10 +112,12 @@ fun UserCard(
                 modifier = Modifier
                     .padding(16.dp)
             ) {
+
+                if (currentRole != null && RoleManager.hasPermission(currentRole, Permission.UPDATE_USER) || currentRole != null &&  RoleManager.hasPermission(currentRole, Permission.DELETE_USER))
+
                 IconButton(onClick = { expanded = !expanded }) {
                     Icon(Icons.Default.MoreVert, contentDescription = "More options")
                 }
-                if (currentRole != null && RoleManager.hasPermission(currentRole, Permission.UPDATE_USER) || currentRole != null &&  RoleManager.hasPermission(currentRole, Permission.UPDATE_USER))
 
                 DropdownMenu(
                     expanded = expanded,

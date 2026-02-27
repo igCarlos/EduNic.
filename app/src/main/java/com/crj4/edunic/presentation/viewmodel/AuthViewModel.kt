@@ -29,7 +29,7 @@ class AuthViewModel : ViewModel() {
     private val sendPasswordResetUseCase = AppModule.sendPasswordResetUseCase
     private val registerCaseUse = AppModule.registerCaseUse
     private val getUserDataUseCase = AppModule.getUserDataUseCase
-    private val getAllUsersUseCase = AppModule.getAllUsersUseCase  // 👈 agregar esto
+    private val getAllUsersUseCase = AppModule.getAllUsersUseCase
 
     private val getUserByIdUseCase = AppModule.GetUserByIdUseCase
 
@@ -131,7 +131,7 @@ class AuthViewModel : ViewModel() {
                     currentRole = role
                     authState = AuthState.Authenticated(role)
 
-                    // 🔥 cargar datos completos del usuario
+                    // cargar datos completos del usuario
                     try {
                         val user = getUserByIdUseCase(uid)
                         _currentUserData.value = user
@@ -183,6 +183,7 @@ class AuthViewModel : ViewModel() {
                 }
         }
     }
+
 
     fun sendPasswordReset(email: String) {
         viewModelScope.launch {

@@ -76,7 +76,7 @@ class SubjectViewModel : ViewModel() {
 
     fun saveSubject(subject: Subject) {
         val role = _currentRole.value ?: return
-        if (!RoleManager.hasPermission(role, Permission.CREATE_USER)) {
+        if (!RoleManager.hasPermission(role, Permission.CREATE_SUBJECT)) {
             _errorMessage.value = "No tienes permiso para crear materias"
             return
         }
@@ -94,7 +94,7 @@ class SubjectViewModel : ViewModel() {
 
     fun deleteSubject(id: String) {
         val role = _currentRole.value ?: return
-        if (!RoleManager.hasPermission(role, Permission.DELETE_USER)) {
+        if (!RoleManager.hasPermission(role, Permission.DELETE_SUBJECT)) {
             _errorMessage.value = "No tienes permiso para eliminar materias"
             return
         }
@@ -110,7 +110,7 @@ class SubjectViewModel : ViewModel() {
 
     fun updateSubject(subject: Subject) {
         val role = _currentRole.value ?: return
-        if (!RoleManager.hasPermission(role, Permission.UPDATE_USER)) {
+        if (!RoleManager.hasPermission(role, Permission.UPDATE_SUBJECT)) {
             _errorMessage.value = "No tienes permiso para actualizar materias"
             return
         }

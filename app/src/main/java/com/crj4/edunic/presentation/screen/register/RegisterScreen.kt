@@ -396,7 +396,7 @@ fun RegisterScreen(
 
         if (formCompleted) {
             LaunchedEffect(Unit) {
-                onNavigate(Screen.AdminHome.route)
+                onNavigate(Screen.UserHome.route)
             }
         }
     }
